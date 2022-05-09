@@ -2,6 +2,9 @@ resources:
   - ../../apps/transport-broker
   - ../../apps/cache-server
 
+namePrefix: staging-
+namespace: staging
+
 transformers:
   - ../../transformers
 
@@ -19,7 +22,3 @@ patchesStrategicMerge:
               env:
                 - name: SPRING_PROFILE_ACTIVE
                   value: uat
-
-namePrefix: staging-
-
-namespace: staging
