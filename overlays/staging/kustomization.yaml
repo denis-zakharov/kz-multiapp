@@ -1,0 +1,25 @@
+resources:
+  - ../../apps/transport-broker
+  - ../../apps/cache-server
+
+transformers:
+  - ../../transformers
+
+patchesStrategicMerge:
+  - |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: cache-server
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cache-server
+              env:
+                - name: SPRING_PROFILE_ACTIVE
+                  value: uat
+
+namePrefix: staging-
+
+namespace: staging

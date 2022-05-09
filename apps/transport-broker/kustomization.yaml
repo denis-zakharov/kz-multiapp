@@ -1,0 +1,11 @@
+resources:
+  - statefulset.yaml
+  - service.yaml
+
+configMapGenerator:
+  - name: transport-broker
+    literals:
+      - endpoint0=wss://transport-broker-0.transport-broker.default.svc:8080
+      - endpoint1=wss://transport-broker-1.transport-broker.default.svc:8080
+
+namespace: default
