@@ -1,2 +1,2 @@
 resources:
-  - endpoints.yaml
+  - transport-broker-endpoints.yaml

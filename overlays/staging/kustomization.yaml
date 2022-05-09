@@ -2,12 +2,6 @@ resources:
   - ../../apps/transport-broker
   - ../../apps/cache-server
 
-namePrefix: staging-
-namespace: staging
-
-transformers:
-  - ../../transformers
-
 patchesStrategicMerge:
   - |-
     apiVersion: apps/v1
@@ -22,3 +16,20 @@ patchesStrategicMerge:
               env:
                 - name: SPRING_PROFILE_ACTIVE
                   value: uat
+
+namePrefix: staging-
+namespace: staging
+
+transformers:
+  - ../../transformers
+  - |
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: validate-k8s-objects
+      annotations:
+        config.kubernetes.io/function: |
+          container:
+            image: gcr.io/kpt-fn/kubeval:v0.2.0
+    data:
+      strict: true

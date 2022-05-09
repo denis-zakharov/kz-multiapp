@@ -24,8 +24,14 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            - name: COMPONENT
+              value: cache-server
             - name: SPRING_PROFILE_ACTIVE
               value: dev,mocked
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           envFrom:
             - configMapRef:
                 name: transport-broker

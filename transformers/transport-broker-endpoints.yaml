@@ -1,0 +1,14 @@
+apiVersion: builtin
+kind: ReplacementTransformer
+metadata:
+  name: svc-name-replacements
+replacements:
+  - source:
+      kind: StatefulSet
+      name: transport-broker
+    targets:
+      - select:
+          kind: ConfigMap
+          name: transport-broker
+        fieldPaths:
+          - data.TRANSPORT_BROKER_SVC_NAME
