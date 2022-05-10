@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: cache-server
-          image: gcr.io/google-containers/busybox
+          image: example.com/cache-server
           resources:
             requests:
               memory: "32Mi"

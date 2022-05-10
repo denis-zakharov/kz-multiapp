@@ -1,7 +1,10 @@
-apiVersion: builtin
-kind: ReplacementTransformer
-metadata:
-  name: svc-name-replacements
+resources:
+  - transport-broker
+  - cache-server
+
+namespace: uat1
+namePrefix: uat1-
+
 replacements:
   - source:
       kind: StatefulSet
@@ -12,3 +15,9 @@ replacements:
           name: transport-broker
         fieldPaths:
           - data.TRANSPORT_BROKER_SVC_NAME
+
+images:
+  - name: example.com/transport-broker
+    newTag: v1-uat1
+  - name: example.com/cache-server
+    newTag: v1-uat1
