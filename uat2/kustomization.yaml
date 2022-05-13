@@ -1,10 +1,20 @@
+# app set
 resources:
-  - transport-broker
-  - cache-server
+  - ../apps/transport-broker
 
-namespace: uat1
-namePrefix: uat1-
+# upstream set
+configMapGenerator:
+  - name: ext-service
+    envs:
+      - ../upstreams/ext-service/dev.env
 
+# cross-cutting fields
+namespace: uat2
+namePrefix: uat2-
+commonLabels:
+  env: uat2
+
+# processes API endpoints
 replacements:
   - source:
       kind: StatefulSet
@@ -16,8 +26,7 @@ replacements:
         fieldPaths:
           - data.TRANSPORT_BROKER_SVC_NAME
 
+# versions
 images:
   - name: example.com/transport-broker
-    newTag: v1-uat1
-  - name: example.com/cache-server
-    newTag: v1-uat1
+    newTag: v0.1-uat2

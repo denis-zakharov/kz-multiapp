@@ -1,0 +1,54 @@
+# app set
+resources:
+  - ../apps/transport-broker
+  - ../apps/cache-server
+
+# app patches
+patchesStrategicMerge:
+  - |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: cache-server
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cache-server
+              env:
+                - name: SPRING_PROFILE_ACTIVE
+                  value: uat
+
+# upstream set
+configMapGenerator:
+  - name: database
+    envs:
+      - ../upstreams/database/prod.env
+  - name: ext-service
+    envs:
+      - ../upstreams/ext-service/staging.env
+
+# cross-cutting fields
+namespace: uat1
+namePrefix: uat1-
+commonLabels:
+  env: uat1
+
+# processes API endpoints
+replacements:
+  - source:
+      kind: StatefulSet
+      name: transport-broker
+    targets:
+      - select:
+          kind: ConfigMap
+          name: transport-broker
+        fieldPaths:
+          - data.TRANSPORT_BROKER_SVC_NAME
+
+# versions
+images:
+  - name: example.com/transport-broker
+    newTag: v1-uat1
+  - name: example.com/cache-server
+    newTag: v1-uat1

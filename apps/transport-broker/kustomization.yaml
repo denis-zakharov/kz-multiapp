@@ -8,5 +8,3 @@ configMapGenerator:
       - TRANSPORT_BROKER_SVC_NAME=transport-broker
       - endpoint0=wss://$(TRANSPORT_BROKER_SVC_NAME)-0.$(TRANSPORT_BROKER_SVC_NAME):8080
       - endpoint1=wss://$(TRANSPORT_BROKER_SVC_NAME)-1.$(TRANSPORT_BROKER_SVC_NAME):8080
-
-namespace: default
