@@ -127,3 +127,8 @@ Standalone mode for local test runs.
 ```sh
 go run main.go debug FunctionConfig.yaml rl-item1.yaml rl-item2.yaml
 ```
+
+Generate Dockerfile.
+```sh
+go run main.go gen .
+```
