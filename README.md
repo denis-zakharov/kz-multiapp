@@ -55,28 +55,29 @@ kind: JavaAppGenerator
 metadata:
   # a common base name for a Deployment/StatefulSet, a Service and a client ConfigMap
   name: koffee
-# Deployment or StatefulSet
-stateful: true
-image: zadenis/koffee
-ports:
-  - https=8443
-  - https-jmx=12000
-replicas: 1
-jvm:
-  # -Xms1024m -Xmx1024m
-  heap: 1024
-  # heap / container memory limit ratio
-  ratio: 0.7
-  extra: -Dmy.sys.prop=my-value
-# an app container env spec
-env:
-  - SERVER_PORT=8080
-  - ANOTHER=value
-# configMapRefs to be used in a container envFrom spec
-# the referenced ConfigMaps must be generated in overlay environments
-upstreams:
-  - database
-  - ext-service
+spec:
+  # Deployment or StatefulSet
+  stateful: true
+  image: zadenis/koffee
+  ports:
+    - https=8443
+    - https-jmx=12000
+  replicas: 1
+  jvm:
+    # -Xms1024m -Xmx1024m
+    heap: 1024
+    # heap / container memory limit ratio
+    ratio: 0.7
+    extra: -Dmy.sys.prop=my-value
+  # an app container env spec
+  env:
+    - SERVER_PORT=8080
+    - ANOTHER=value
+  # configMapRefs to be used in a container envFrom spec
+  # the referenced ConfigMaps must be generated in overlay environments
+  upstreams:
+    - database
+    - ext-service
 ```
 
 An optional configMapGenerator that produces an API properties exposed

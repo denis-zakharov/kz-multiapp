@@ -1,0 +1,44 @@
+kind: ResourceList
+items:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: cache-server
+    spec:
+    selector:
+      matchLabels:
+      app: cache-server
+    template:
+      metadata:
+      labels:
+        app: cache-server
+      spec:
+        containers:
+          - name: cache-server
+            image: example.com/cache-server
+            resources:
+              requests:
+                memory: "32Mi"
+                cpu: "100m"
+              limits:
+                memory: "128Mi"
+                cpu: "500m"
+            ports:
+              - containerPort: 8080
+            env:
+              - name: COMPONENT
+                value: cache-server
+              - name: SPRING_PROFILE_ACTIVE
+                value: dev,mocked
+              - name: POD_IP
+                valueFrom:
+                  fieldRef:
+                    fieldPath: status.podIP
+            envFrom:
+              - configMapRef:
+                  name: transport-broker
+              - configMapRef:
+                  name: database
+functionConfig:
+  spec:
+    value: KRM-FN
