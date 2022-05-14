@@ -2,7 +2,10 @@ module github.com/denis-zakharov/kustomize-multiapp
 
 go 1.18
 
-require sigs.k8s.io/kustomize/kyaml v0.13.6
+require (
+	github.com/spf13/cobra v1.2.1
+	sigs.k8s.io/kustomize/kyaml v0.13.6
+)
 
 require (
 	github.com/PuerkitoBio/purell v1.1.1 // indirect
@@ -13,11 +16,13 @@ require (
 	github.com/go-openapi/jsonpointer v0.19.3 // indirect
 	github.com/go-openapi/jsonreference v0.19.3 // indirect
 	github.com/go-openapi/swag v0.19.5 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.0 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/monochromegane/go-gitignore v0.0.0-20200626010858-205db1a8cc00 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/xlab/treeprint v0.0.0-20181112141820-a009c3971eca // indirect
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4 // indirect

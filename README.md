@@ -107,3 +107,17 @@ nameReference:
       - kind: ConfigMap
         path: data/KOFFEE_SVC_NAME
 ```
+
+
+# Execution
+
+Embedded (non-standalone) mode as run by kustomize.
+
+```sh
+cat resource-list-example.yaml | go run main.go
+```
+
+Standalone mode for local test runs.
+```sh
+go run main.go debug FunctionConfig.yaml rl-item1.yaml rl-item2.yaml
+```
