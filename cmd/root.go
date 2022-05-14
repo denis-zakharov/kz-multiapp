@@ -1,46 +1,55 @@
 package cmd
 
 import (
+	"embed"
 	"os"
 
 	"github.com/spf13/cobra"
 	"sigs.k8s.io/kustomize/kyaml/fn/framework"
 	"sigs.k8s.io/kustomize/kyaml/fn/framework/command"
-	"sigs.k8s.io/kustomize/kyaml/kio"
-	"sigs.k8s.io/kustomize/kyaml/yaml"
+	"sigs.k8s.io/kustomize/kyaml/fn/framework/parser"
 )
 
-type Metadata struct {
-	Name string `yaml:"name"`
-}
+//go:embed templates/*
+var tempalteFS embed.FS
 
-type Spec struct {
-	Value string `yaml:"value,omitempty"`
-}
-
-type v1alpha1Annotator struct {
+type v1alpha1JavaAppGen struct {
 	Metadata Metadata `yaml:"metadata"`
 	Spec     Spec     `yaml:"spec,omitempty"`
 }
+type Metadata struct {
+	Name string `yaml:"name"`
+}
+type Spec struct {
+	Stateful  bool       `yaml:"stateful"`
+	Replicas  int        `yaml:"replicas"`
+	Image     string     `yaml:"image"`
+	Ports     []PortItem `yaml:"ports"`
+	JVM       JVM        `yaml:"jvm"`
+	Env       []EnvItem  `yaml:"env"`
+	Upstreams []string   `yaml:"upstreams"`
+}
+type PortItem struct {
+	Name string `yaml:"name"`
+	Port int    `yaml:"port"`
+}
+type JVM struct {
+	Heap  int    `yaml:"heap"`
+	Limit int    `yaml:"limit"`
+	Extra string `yaml:"extra"`
+}
+type EnvItem struct {
+	Name  string `yaml:"name"`
+	Value string `yaml:"value"`
+}
 
-func createResourceListProcessor() *framework.SimpleProcessor {
-	functionConfig := &v1alpha1Annotator{}
-
-	fn := func(items []*yaml.RNode) ([]*yaml.RNode, error) {
-		for i := range items {
-			err := items[i].PipeE(yaml.SetAnnotation("custom.io/the-value", functionConfig.Spec.Value))
-			if err != nil {
-				return nil, err
-			}
-			err = items[i].PipeE(yaml.SetAnnotation("custom.io/the-name", functionConfig.Metadata.Name))
-			if err != nil {
-				return nil, err
-			}
-		}
-		return items, nil
+func buildProcessor(app *v1alpha1JavaAppGen) framework.ResourceListProcessor {
+	return framework.TemplateProcessor{
+		ResourceTemplates: []framework.ResourceTemplate{{
+			Templates: parser.TemplateFiles("templates").FromFS(tempalteFS),
+		}},
+		TemplateData: app,
 	}
-
-	return &framework.SimpleProcessor{Config: functionConfig, Filter: kio.FilterFunc(fn)}
 }
 
 func createEmbeddedCommand() *cobra.Command {
@@ -52,7 +61,8 @@ func createEmbeddedCommand() *cobra.Command {
 	return cmd
 }
 
-var processor = createResourceListProcessor()
+var fnConfig = &v1alpha1JavaAppGen{}
+var processor = buildProcessor(fnConfig)
 var rootCmd = createEmbeddedCommand()
 
 func Execute() {

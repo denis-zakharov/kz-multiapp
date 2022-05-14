@@ -1,0 +1,54 @@
+{{- $kind := "Deployment" }}
+{{- if .Spec.Stateful }}
+{{- $kind = "StatefulSet" }}
+{{- end }}
+{{- $name := .Metadata.Name }}
+apiVersion: apps/v1
+kind: {{ $kind }}
+metadata:
+  name: {{ $name }}
+spec:
+  replicas: {{ .Spec.Replicas }}
+  {{- if .Spec.Stateful }}
+  serviceName: {{ $name }}
+  {{- end }}
+  selector:
+    matchLabels:
+      app: {{ $name }}
+  template:
+    metadata:
+      labels:
+        app: {{ $name }}
+    spec:
+      containers:
+        - name: {{ $name }}
+          image: {{ .Spec.Image }}
+          resources:
+            requests:
+              memory: {{ printf "%dMi" .Spec.JVM.Limit }}
+              cpu: "100m"
+            limits:
+              memory: {{ printf "%dMi" .Spec.JVM.Limit }}
+          ports:
+          {{- range .Spec.Ports }}
+            - name: {{ .Name }}
+              containerPort: {{ .Port }}
+          {{- end }}
+          env:
+            - name: COMPONENT
+              value: {{ $name }}
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: JAVA_OPTIONS
+              value: {{ printf "-Xmx%d %s" .Spec.JVM.Heap .Spec.JVM.Extra }}
+          {{- range .Spec.Env }}
+            - name: {{ .Name }}
+              value: "{{ .Value }}"
+          {{- end }}
+          envFrom:
+          {{- range .Spec.Upstreams }}
+            - configMapRef:
+                name: {{ . }}
+          {{- end }}          

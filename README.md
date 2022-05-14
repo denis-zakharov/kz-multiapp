@@ -58,28 +58,30 @@ metadata:
 spec:
   # Deployment or StatefulSet
   stateful: true
+  replicas: 1
   image: zadenis/koffee
   ports:
-    - https=8443
-    - https-jmx=12000
-  replicas: 1
+    - name: http
+      port: 8080
+    - name: http-jmx
+      port: 12000
   jvm:
-    # -Xms1024m -Xmx1024m
+    # -Xmx1024m
     heap: 1024
-    # heap / container memory limit ratio
-    ratio: 0.7
+    # container memory limit ratio
+    limit: 1400
     extra: -Dmy.sys.prop=my-value
   # an app container env spec
   env:
-    - SERVER_PORT=8080
-    - ANOTHER=value
-  # other processes client API configMapRefs to be used in a container envFrom spec
-  # the referenced ConfigMaps must be generated in the corresponding app base
-  processes:
-    - transport-broker
+    - name: SERVER_PORT
+      value: "8080"
+    - name: ANOTHER
+      value: value
   # configMapRefs to be used in a container envFrom spec
-  # the referenced ConfigMaps must be generated in overlay environments
+  # the referenced ConfigMaps must be generated in overlay environments or app definitions
+  # external upstream systems and also internal processes APIs
   upstreams:
+    - transport-broker
     - database
     - ext-service
 ```

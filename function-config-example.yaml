@@ -1,6 +1,26 @@
-apiVersion: annotator.example.com/v1alpha1
-kind: Annotator
+apiVersion: java.example.com/v1alpha1
+kind: JavaAppGenerator
 metadata:
-  name: value-annotator
+  name: koffee
 spec:
-  value: KRM-FN
+  stateful: true
+  replicas: 1
+  image: zadenis/koffee
+  ports:
+    - name: http
+      port: 8080
+    - name: http-jmx
+      port: 12000
+  jvm:
+    heap: 1024
+    limit: 1400
+    extra: -Dmy.sys.prop=my-value
+  env:
+    - name: SERVER_PORT
+      value: "8080"
+    - name: ANOTHER
+      value: value
+  upstreams:
+    - transport-broker
+    - database
+    - ext-service
