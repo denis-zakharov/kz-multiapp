@@ -132,3 +132,8 @@ Generate Dockerfile.
 ```sh
 go run main.go gen .
 ```
+
+Build.
+```sh
+docker build -t example.com/javagen:v0.1 .
+```
