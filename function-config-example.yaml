@@ -1,0 +1,4 @@
+apiVersion: annotator.example.com/v1alpha1
+kind: Annotator
+spec:
+  value: KRM-FN

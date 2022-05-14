@@ -17,7 +17,7 @@ type Example struct {
 	Spec Spec `yaml:"spec,omitempty"`
 }
 
-func runFunction() *cobra.Command {
+func createResourceListProcessor() *framework.SimpleProcessor {
 	functionConfig := &Example{}
 
 	fn := func(items []*yaml.RNode) ([]*yaml.RNode, error) {
@@ -30,19 +30,22 @@ func runFunction() *cobra.Command {
 		return items, nil
 	}
 
-	p := framework.SimpleProcessor{Config: functionConfig, Filter: kio.FilterFunc(fn)}
+	return &framework.SimpleProcessor{Config: functionConfig, Filter: kio.FilterFunc(fn)}
+}
 
-	cmd := command.Build(p, command.StandaloneDisabled, false)
+func createEmbeddedCommand() *cobra.Command {
+	cmd := command.Build(processor, command.StandaloneDisabled, false)
 	cmd.Use = "javagen"
 	cmd.Short = "Generate Java App Kubernetes resources"
 	cmd.Long = `Generate Kubernetes resources as as a kustomize transfomer.
-		Implemented as a containerized KRM function.`
+						Implemented as a containerized KRM function.`
 	return cmd
 }
 
-func Execute() {
-	rootCmd := runFunction()
+var processor = createResourceListProcessor()
+var rootCmd = createEmbeddedCommand()
 
+func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
