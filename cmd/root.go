@@ -10,19 +10,29 @@ import (
 	"sigs.k8s.io/kustomize/kyaml/yaml"
 )
 
+type Metadata struct {
+	Name string `yaml:"name"`
+}
+
 type Spec struct {
 	Value string `yaml:"value,omitempty"`
 }
-type Example struct {
-	Spec Spec `yaml:"spec,omitempty"`
+
+type v1alpha1Annotator struct {
+	Metadata Metadata `yaml:"metadata"`
+	Spec     Spec     `yaml:"spec,omitempty"`
 }
 
 func createResourceListProcessor() *framework.SimpleProcessor {
-	functionConfig := &Example{}
+	functionConfig := &v1alpha1Annotator{}
 
 	fn := func(items []*yaml.RNode) ([]*yaml.RNode, error) {
 		for i := range items {
 			err := items[i].PipeE(yaml.SetAnnotation("custom.io/the-value", functionConfig.Spec.Value))
+			if err != nil {
+				return nil, err
+			}
+			err = items[i].PipeE(yaml.SetAnnotation("custom.io/the-name", functionConfig.Metadata.Name))
 			if err != nil {
 				return nil, err
 			}

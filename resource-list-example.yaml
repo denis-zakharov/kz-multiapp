@@ -42,5 +42,7 @@ items:
 functionConfig:
   apiVersion: annotator.example.com/v1alpha1
   kind: Annotator
+  metadata:
+    name: value-annotator
   spec:
     value: KRM-FN
