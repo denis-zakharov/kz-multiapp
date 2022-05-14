@@ -73,6 +73,10 @@ spec:
   env:
     - SERVER_PORT=8080
     - ANOTHER=value
+  # other processes client API configMapRefs to be used in a container envFrom spec
+  # the referenced ConfigMaps must be generated in the corresponding app base
+  processes:
+    - transport-broker
   # configMapRefs to be used in a container envFrom spec
   # the referenced ConfigMaps must be generated in overlay environments
   upstreams:
