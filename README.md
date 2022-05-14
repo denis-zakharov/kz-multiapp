@@ -57,6 +57,7 @@ metadata:
   name: koffee
 # Deployment or StatefulSet
 stateful: true
+image: zadenis/koffee
 ports:
   - https=8443
   - https-jmx=12000
