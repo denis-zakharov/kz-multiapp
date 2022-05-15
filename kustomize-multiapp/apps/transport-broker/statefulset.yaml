@@ -17,13 +17,21 @@ spec:
           image: example.com/transport-broker
           resources:
             requests:
-              memory: "32Mi"
               cpu: "100m"
             limits:
-              memory: "128Mi"
               cpu: "500m"
           ports:
-            - containerPort: 8080
+            - name: ws
+              containerPort: 8080
+          env:
+            - name: COMPONENT
+              value: transport-broker
+            - name: SPRING_PROFILE_ACTIVE
+              value: dev,mocked
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           envFrom:
             - configMapRef:
                 name: ext-service

@@ -8,5 +8,6 @@ spec:
   selector:
     app: transport-broker
   ports:
-    - port: 8080
+    - name: ws
+      port: 8080
       targetPort: 8080

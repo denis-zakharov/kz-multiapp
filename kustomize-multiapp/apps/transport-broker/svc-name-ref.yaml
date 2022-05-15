@@ -1,0 +1,5 @@
+nameReference:
+  - kind: Service # get a metadata.name from Service objects
+    fieldSpecs:
+      - kind: ConfigMap
+        path: data/TRANSPORT_BROKER_SVC_NAME

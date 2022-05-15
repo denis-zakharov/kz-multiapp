@@ -17,8 +17,15 @@ type Metadata struct {
 type Spec struct {
 	Index int     `yaml:"index"`
 	Heap  int     `yaml:"heap"`
-	Ratio float64 `yaml:"heap"`
+	Ratio float64 `yaml:"ratio"`
 	Extra string  `yaml:"extra"`
+}
+
+func (trans *JavaOptsTransformerv1alpha1) Default() error {
+	if trans.Spec.Ratio == 0 {
+		trans.Spec.Ratio = 0.7
+	}
+	return nil
 }
 
 func (trans *JavaOptsTransformerv1alpha1) Validate() error {

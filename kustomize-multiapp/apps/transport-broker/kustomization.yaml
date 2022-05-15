@@ -6,5 +6,23 @@ configMapGenerator:
   - name: transport-broker
     literals:
       - TRANSPORT_BROKER_SVC_NAME=transport-broker
-      - endpoint0=wss://$(TRANSPORT_BROKER_SVC_NAME)-0.$(TRANSPORT_BROKER_SVC_NAME):8080
-      - endpoint1=wss://$(TRANSPORT_BROKER_SVC_NAME)-1.$(TRANSPORT_BROKER_SVC_NAME):8080
+      - TRANSPORT_BROKER_PROTO=ws
+      - TRANSPORT_BROKER_PORT=8080
+
+configurations:
+  - svc-name-ref.yaml
+
+transformers:
+  - |
+    apiVersion: javaopts.example.com/v1alpha1
+    kind: JavaOptsTransformer
+    metadata:
+      name: transport-broker
+      annotations:
+        config.kubernetes.io/function: |
+          container:
+            image: example.com/java-opts-transformer:v0.1
+    spec:
+      index: 0
+      heap: 512
+      ratio: 0.8

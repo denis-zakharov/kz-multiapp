@@ -1,0 +1,23 @@
+# app set
+resources:
+  - ../apps/transport-broker
+
+# upstream set
+configMapGenerator:
+  - name: database
+    envs:
+      - ../upstreams/database/dev.env
+  - name: ext-service
+    envs:
+      - ../upstreams/ext-service/dev.env
+
+# cross-cutting fields
+namespace: dev
+namePrefix: dev-
+commonLabels:
+  env: dev
+
+# versions
+images:
+  - name: example.com/transport-broker
+    newTag: v1-dev

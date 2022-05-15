@@ -16,10 +16,8 @@ spec:
           image: example.com/cache-server
           resources:
             requests:
-              memory: "32Mi"
               cpu: "100m"
             limits:
-              memory: "128Mi"
               cpu: "500m"
           ports:
             - containerPort: 8080

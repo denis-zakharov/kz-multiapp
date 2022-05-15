@@ -1,0 +1,70 @@
+# app set
+resources:
+  - ../apps/transport-broker
+  - ../apps/cache-server
+
+# app patches
+patchesStrategicMerge:
+  - |-
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: cache-server
+    spec:
+      template:
+        spec:
+          containers:
+            - name: cache-server
+              env:
+                - name: SPRING_PROFILE_ACTIVE
+                  value: staging
+  - |-
+    apiVersion: apps/v1
+    kind: StatefulSet
+    metadata:
+      name: transport-broker
+    spec:
+      template:
+        spec:
+          containers:
+            - name: transport-broker
+              env:
+                - name: SPRING_PROFILE_ACTIVE
+                  value: staging
+
+# upstream set
+configMapGenerator:
+  - name: database
+    envs:
+      - ../upstreams/database/prod.env
+  - name: ext-service
+    envs:
+      - ../upstreams/ext-service/staging.env
+
+# more memory for cache-server in staging
+transformers:
+  - |
+    apiVersion: javaopts.example.com/v1alpha1
+    kind: JavaOptsTransformer
+    metadata:
+      name: staging-cache-server
+      annotations:
+        config.kubernetes.io/function: |
+          container:
+            image: example.com/java-opts-transformer:v0.1
+    spec:
+      heap: 4096
+      extra: -Dcache.string.interner=true
+
+# cross-cutting fields
+namespace: staging
+namePrefix: staging-
+commonLabels:
+  env: staging
+
+# versions
+images:
+  - name: example.com/transport-broker
+    newTag: v1-staging
+  - name: example.com/cache-server
+    newTag: v1-staging

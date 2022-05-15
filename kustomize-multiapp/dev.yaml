@@ -1,0 +1,98 @@
+apiVersion: v1
+data:
+  DB_PASS: app_pass
+  DB_URL: mysql://mydb-dev.example.com:5005
+  DB_USER: app_user
+kind: ConfigMap
+metadata:
+  labels:
+    env: dev
+  name: dev-database-k9f76ct9d4
+  namespace: dev
+---
+apiVersion: v1
+data:
+  DEV_KEY: dev-value
+kind: ConfigMap
+metadata:
+  labels:
+    env: dev
+  name: dev-ext-service-k89tch2k42
+  namespace: dev
+---
+apiVersion: v1
+data:
+  TRANSPORT_BROKER_PORT: "8080"
+  TRANSPORT_BROKER_PROTO: ws
+  TRANSPORT_BROKER_SVC_NAME: dev-transport-broker
+kind: ConfigMap
+metadata:
+  labels:
+    env: dev
+  name: dev-transport-broker-f49fk4ddmf
+  namespace: dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    env: dev
+  name: dev-transport-broker
+  namespace: dev
+spec:
+  clusterIP: None
+  ports:
+  - name: ws
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: transport-broker
+    env: dev
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    env: dev
+  name: dev-transport-broker
+  namespace: dev
+spec:
+  selector:
+    matchLabels:
+      app: transport-broker
+      env: dev
+  serviceName: dev-transport-broker
+  template:
+    metadata:
+      labels:
+        app: transport-broker
+        env: dev
+    spec:
+      containers:
+      - env:
+        - name: COMPONENT
+          value: transport-broker
+        - name: SPRING_PROFILE_ACTIVE
+          value: dev,mocked
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: JAVA_OPTIONS
+          value: -Xms512m -Xmx512m
+        envFrom:
+        - configMapRef:
+            name: dev-ext-service-k89tch2k42
+        image: example.com/transport-broker:v1-dev
+        name: transport-broker
+        ports:
+        - containerPort: 8080
+          name: ws
+        resources:
+          limits:
+            cpu: 500m
+            memory: 640Mi
+          requests:
+            cpu: 100m
+            memory: 640Mi

@@ -1,0 +1,145 @@
+apiVersion: v1
+data:
+  DB_PASS: app_pass
+  DB_URL: mysql://mydb-prod.example.com:5005
+  DB_USER: app_user
+kind: ConfigMap
+metadata:
+  labels:
+    env: staging
+  name: staging-database-g9b578bg67
+  namespace: staging
+---
+apiVersion: v1
+data:
+  STAGING_KEY: STAGING-value
+kind: ConfigMap
+metadata:
+  labels:
+    env: staging
+  name: staging-ext-service-gc8db2h9f8
+  namespace: staging
+---
+apiVersion: v1
+data:
+  TRANSPORT_BROKER_PORT: "8080"
+  TRANSPORT_BROKER_PROTO: ws
+  TRANSPORT_BROKER_SVC_NAME: staging-transport-broker
+kind: ConfigMap
+metadata:
+  labels:
+    env: staging
+  name: staging-transport-broker-f49fk4ddmf
+  namespace: staging
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    env: staging
+  name: staging-transport-broker
+  namespace: staging
+spec:
+  clusterIP: None
+  ports:
+  - name: ws
+    port: 8080
+    targetPort: 8080
+  selector:
+    app: transport-broker
+    env: staging
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    env: staging
+  name: staging-cache-server
+  namespace: staging
+spec:
+  selector:
+    matchLabels:
+      app: cache-server
+      env: staging
+  template:
+    metadata:
+      labels:
+        app: cache-server
+        env: staging
+    spec:
+      containers:
+      - env:
+        - name: SPRING_PROFILE_ACTIVE
+          value: staging
+        - name: COMPONENT
+          value: cache-server
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: JAVA_OPTIONS
+          value: -Xms4096m -Xmx4096m -Dcache.string.interner=true
+        envFrom:
+        - configMapRef:
+            name: staging-transport-broker-f49fk4ddmf
+        - configMapRef:
+            name: staging-database-g9b578bg67
+        image: example.com/cache-server:v1-staging
+        name: cache-server
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            cpu: 500m
+            memory: 5851Mi
+          requests:
+            cpu: 100m
+            memory: 5851Mi
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    env: staging
+  name: staging-transport-broker
+  namespace: staging
+spec:
+  selector:
+    matchLabels:
+      app: transport-broker
+      env: staging
+  serviceName: staging-transport-broker
+  template:
+    metadata:
+      labels:
+        app: transport-broker
+        env: staging
+    spec:
+      containers:
+      - env:
+        - name: SPRING_PROFILE_ACTIVE
+          value: staging
+        - name: COMPONENT
+          value: transport-broker
+        - name: POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: JAVA_OPTIONS
+          value: -Xms512m -Xmx512m
+        envFrom:
+        - configMapRef:
+            name: staging-ext-service-gc8db2h9f8
+        image: example.com/transport-broker:v1-staging
+        name: transport-broker
+        ports:
+        - containerPort: 8080
+          name: ws
+        resources:
+          limits:
+            cpu: 500m
+            memory: 640Mi
+          requests:
+            cpu: 100m
+            memory: 640Mi
