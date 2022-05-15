@@ -1,0 +1,7 @@
+apiVersion: builtin
+kind: PrefixSuffixTransformer
+metadata:
+  name: not-important-to-example
+prefix: staging-
+fieldSpecs:
+  - path: metadata/name

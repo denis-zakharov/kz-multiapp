@@ -1,0 +1,4 @@
+resources:
+  - java-opts.yaml
+  - namespace.yaml
+  - prefix.yaml

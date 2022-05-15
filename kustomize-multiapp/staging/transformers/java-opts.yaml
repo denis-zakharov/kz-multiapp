@@ -1,0 +1,11 @@
+apiVersion: javaopts.example.com/v1alpha1
+kind: JavaOptsTransformer
+metadata:
+  name: cache-server
+  annotations:
+    config.kubernetes.io/function: |
+      container:
+        image: example.com/java-opts-transformer:v0.1
+spec:
+  heap: 4096
+  extra: -Dcache.string.interner=true

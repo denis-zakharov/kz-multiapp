@@ -41,24 +41,9 @@ configMapGenerator:
     envs:
       - ../upstreams/ext-service/staging.env
 
-# more memory for cache-server in staging
 transformers:
-  - |
-    apiVersion: javaopts.example.com/v1alpha1
-    kind: JavaOptsTransformer
-    metadata:
-      name: staging-cache-server
-      annotations:
-        config.kubernetes.io/function: |
-          container:
-            image: example.com/java-opts-transformer:v0.1
-    spec:
-      heap: 4096
-      extra: -Dcache.string.interner=true
+  - transformers
 
-# cross-cutting fields
-namespace: staging
-namePrefix: staging-
 commonLabels:
   env: staging
 
