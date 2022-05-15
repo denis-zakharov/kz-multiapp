@@ -1,0 +1,20 @@
+{{- $name := .Metadata.Name }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $name }}
+spec:
+  type: ClusterIP
+  {{- if .Spec.Stateful }}
+  ClusterIP: None
+  {{- end }}
+  selector:
+    app: {{ $name }}
+  ports:
+  - port: 8080
+    targetPort: 8080
+  {{- range .Spec.Ports }}
+  - name: {{ .Name }}
+    port: {{ .Port }}
+    targetPort: {{ .Port }}
+  {{- end }}
