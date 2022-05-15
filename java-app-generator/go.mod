@@ -1,4 +1,4 @@
-module github.com/denis-zakharov/kustomize-multiapp/java-app-generator
+module github.com/denis-zakharov/kz-multiapp/java-app-generator
 
 go 1.18
 
