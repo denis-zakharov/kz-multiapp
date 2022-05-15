@@ -38,7 +38,9 @@ value: SUPER_HEAP
 	// remove
 	err := r.PipeE(
 		yaml.LookupCreate(yaml.SequenceNode,
-			"spec", "template", "spec", "containers", "[name=java]", "env"),
+			"spec", "template", "spec", "containers"),
+		yaml.GetElementByIndex(0),
+		yaml.LookupCreate(yaml.SequenceNode, "env"),
 		yaml.ElementSetter{
 			Keys:    []string{"name"},
 			Values:  []string{"JAVA_OPTIONS"},
@@ -49,7 +51,9 @@ value: SUPER_HEAP
 	// append
 	err = r.PipeE(
 		yaml.LookupCreate(yaml.SequenceNode,
-			"spec", "template", "spec", "containers", "[name=java]", "env"),
+			"spec", "template", "spec", "containers"),
+		yaml.GetElementByIndex(0),
+		yaml.LookupCreate(yaml.SequenceNode, "env"),
 		yaml.ElementAppender{Elements: []*yaml.Node{jvmOpts.YNode()}},
 	)
 	must(err)
