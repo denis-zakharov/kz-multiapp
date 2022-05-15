@@ -1,0 +1,7 @@
+Path: spec.template.spec.containers[0].env
+
+deployment1: there is java opts not in the beginning
+
+deployment2: no java opts, there is env spec
+
+deployment3: no env spec at all
