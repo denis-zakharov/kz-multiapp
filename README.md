@@ -137,3 +137,30 @@ Build.
 ```sh
 docker build -t example.com/javagen:v0.1 .
 ```
+
+# Java Opts Transformer
+The generator brings us back to Go templating which we tried to avoid.
+
+Let's move on to a more fine-grained approach with transformers:
+- Declare most of the manifests without templates
+- Modify some parts that may use parameters.
+
+For example, we can inject JAVA_OPTIONS environment variable and the corresponding
+resources definition for memory limits.
+
+```yaml
+apiVersion: javaopts.example.com/v1alpha1
+kind: JavaOptsTransformer
+metadata:
+  # a Deployment/StatefulSet to target
+  name: koffee
+spec:
+  # OPTIONAL: container index, default is 0
+  index: 0
+  # -Xmx1024m
+  heap: 1024
+  # OPTIONAL: heap / container memory limit ratio, default is 0.7
+  ratio: 0.7
+  # OPTIONAL: extra JVM arguments, default is an empty string
+  extra: -Dmy.sys.prop=my-value
+```

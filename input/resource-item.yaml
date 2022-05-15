@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: cache-server
+  name: koffee
 spec:
   selector:
     matchLabels:
-      app: cache-server
+      app: koffee
   template:
     metadata:
       labels:
-        app: cache-server
+        app: koffee
     spec:
       containers:
-        - name: cache-server
-          image: example.com/cache-server
+        - name: koffee
+          image: example.com/koffee
           resources:
             requests:
               memory: "32Mi"
@@ -25,7 +25,7 @@ spec:
             - containerPort: 8080
           env:
             - name: COMPONENT
-              value: cache-server
+              value: koffee
             - name: SPRING_PROFILE_ACTIVE
               value: dev,mocked
             - name: POD_IP

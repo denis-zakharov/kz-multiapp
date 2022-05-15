@@ -1,0 +1,51 @@
+kind: ResourceList
+items:
+  - apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: koffee
+    spec:
+      selector:
+        matchLabels:
+          app: koffee
+      template:
+        metadata:
+          labels:
+            app: koffee
+        spec:
+          containers:
+            - name: koffee
+              image: example.com/koffee
+              resources:
+                requests:
+                  memory: "32Mi"
+                  cpu: "100m"
+                limits:
+                  memory: "128Mi"
+                  cpu: "500m"
+              ports:
+                - containerPort: 8080
+              env:
+                - name: COMPONENT
+                  value: koffee
+                - name: SPRING_PROFILE_ACTIVE
+                  value: dev,mocked
+                - name: POD_IP
+                  valueFrom:
+                    fieldRef:
+                      fieldPath: status.podIP
+              envFrom:
+                - configMapRef:
+                    name: transport-broker
+                - configMapRef:
+                    name: database
+functionConfig:
+  apiVersion: javaopts.example.com/v1alpha1
+  kind: JavaOptsTransformer
+  metadata:
+    name: koffee
+  spec:
+    index: 0
+    heap: 1024
+    ratio: 0.7
+    extra: -Dmy.sys.prop=my-value

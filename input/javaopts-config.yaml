@@ -1,0 +1,9 @@
+apiVersion: javaopts.example.com/v1alpha1
+kind: JavaOptsTransformer
+metadata:
+  name: koffee
+spec:
+  index: 0
+  heap: 1024
+  ratio: 0.7
+  extra: -Dmy.sys.prop=my-value

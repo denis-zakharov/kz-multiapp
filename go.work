@@ -1,3 +1,7 @@
 go 1.18
 
-use ./java-app-generator
+use (
+	./java-app-generator
+	./java-opts-transformer
+	./kyaml-experiments
+)
